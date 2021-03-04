@@ -4,6 +4,7 @@ const app = express();
 require('dotenv/config')
 //const uuid=require('uuid/v4')
 const aws=require('aws-sdk')
+const port=process.env.PORT ||8000
 // default options
 app.use(fileUpload());
 const s3=new aws.S3({
@@ -57,6 +58,6 @@ s3.upload(params,(error,data)=>{
   //   res.send('File uploaded!');
   // });
 });
-app.listen(8000,()=>{
+app.listen(port,()=>{
   console.log("Server is sup")
 })
