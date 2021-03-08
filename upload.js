@@ -1,10 +1,21 @@
+
 const express = require('express');
+var exphbs = require('express-handlebars');
+const path=require('path')
 const fileUpload = require('express-fileupload');
+const hbs=require('hbs')
 const app = express();
 require('dotenv/config')
 //const uuid=require('uuid/v4')
 const aws=require('aws-sdk')
-const port=process.env.PORT ||8000
+const port=process.env.PORT ||8000;
+const viewPath = path.join(__dirname,"templates/views");
+
+console.log(viewPath);
+app.use(express.static( path.join(__dirname,'../public')));
+app.set('view engine', 'hbs');
+app.set('views', viewPath);
+
 // default options
 app.use(fileUpload());
 const s3=new aws.S3({
@@ -12,6 +23,7 @@ const s3=new aws.S3({
   secretAccessKey:process.env.AWS_SECRET
 })
 app.get('/', function(req, res) {
+ 
     res.sendFile(__dirname + '/index.html')
     //res.json({ message: 'WELCOME' });   
 });
@@ -44,7 +56,9 @@ s3.upload(params,(error,data)=>{
   if(error){
       return res.status(404).send(error)
   } else {
-    return res.status(202).send(data.Location)  
+    //res.sendFile(__dirname + '/index.html?url=abc')
+    res.render('index',{name:data.Location})
+    //return res.status(202).send(data.Location)  
     console.log("Passed in AWS upload",data);
       
   }
